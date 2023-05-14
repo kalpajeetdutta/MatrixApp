@@ -9,7 +9,7 @@ import React, {useState} from 'react';
 import data from '../utils/data';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
-import {add, multiply, substract, transpose} from '../utils/operations';
+import {add, determinant, inverse, multiply, substract, transpose} from '../utils/operations';
 import {Linking} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -20,6 +20,7 @@ const Body = ({navigation}) => {
   const [matrix2cols, setMatrix2Cols] = useState(0);
   const [error, setError] = useState('');
   const [ans, setAns] = useState(null);
+  const [val, setVal] = useState(null)
 
   const [table1, setTable1] = useState(() => data(matrix1rows, matrix1cols));
   const [table2, setTable2] = useState(() => data(matrix2rows, matrix2cols));
@@ -202,6 +203,7 @@ const Body = ({navigation}) => {
                   value.length != 0
                     ? setError(null)
                     : setError('Please enter rows and columns');
+                  setVal(null);
                   setAns(value);
                 } else {
                   console.log('Matrix cannot be added');
@@ -228,6 +230,7 @@ const Body = ({navigation}) => {
                   value.length != 0
                     ? setError(null)
                     : setError('Please enter rows and columns');
+                  setVal(null);
                   setAns(value);
                 } else {
                   console.log('Matrix cannot be substract');
@@ -252,6 +255,7 @@ const Body = ({navigation}) => {
                   value.length != 0
                     ? setError(null)
                     : setError('Please enter rows and columns');
+                  setVal(null);
                   setAns(value);
                 } else {
                   console.log("Rows and columns didn't matched");
@@ -271,6 +275,7 @@ const Body = ({navigation}) => {
                 value.length != 0
                   ? setError(null)
                   : setError('Please enter rows and columns');
+                setVal(null);
                 setAns(value);
               }}>
               <Text className="text-lg font-medium text-gray-200">
@@ -286,10 +291,92 @@ const Body = ({navigation}) => {
                 value.length != 0
                   ? setError(null)
                   : setError('Please enter rows and columns');
+                setVal(null);
                 setAns(value);
               }}>
               <Text className="text-lg font-medium text-gray-200">
                 B Transpose
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View className="flex flex-row justify-evenly items-center my-3">
+            <TouchableOpacity
+                className="bg-[#0e3157] py-2 px-5 rounded-3xl"
+                activeOpacity={0.8}
+                onPress={() => {
+                  if(matrix1rows === matrix1cols){
+                    let value = inverse(table1, matrix1rows);
+                    console.log(value);
+                    value ? value.length != 0
+                      ? setError(null)
+                      : setError('Please enter rows and columns')
+                      : setError('Matrix A is a singular matrix')
+                    setVal(null);
+                    setAns(value);
+                  }
+                  else{
+                    setError('Matrix is not a square matrix')
+                  }
+                }}>
+              <Text className="text-lg font-medium text-gray-200">
+                Inverse of A
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                className="bg-[#0e3157] py-2 px-5 rounded-3xl"
+                activeOpacity={0.8}
+                onPress={() => {
+                  if(matrix2rows === matrix2cols){
+                    let value = inverse(table2, matrix2rows);
+                    console.log(value);
+                    value ? value.length != 0
+                      ? setError(null)
+                      : setError('Please enter rows and columns')
+                      : setError('Matrix B is a singular matrix')
+                    setVal(null);
+                    setAns(value);
+                  }
+                }}>
+              <Text className="text-lg font-medium text-gray-200">
+                Inverse of B
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View className="flex flex-row justify-evenly items-center my-3">
+          <TouchableOpacity
+              className="bg-[#0e3157] py-2 px-5 rounded-3xl"
+              activeOpacity={0.8}
+              onPress={() => {
+                if(matrix1rows === matrix1cols){
+                  let value = determinant(table1, matrix1rows);
+                  // console.log(value);
+                  setAns(null);
+                  setVal(value);
+                  console.log(val)
+                }
+                else{
+                  setError('Matrix should a square matrix')
+                }
+              }}>
+              <Text className="text-lg font-medium text-gray-200">
+                Determinant(A)
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              className="bg-[#0e3157] py-2 px-5 rounded-3xl"
+              activeOpacity={0.8}
+              onPress={() => {
+                if(matrix2rows === matrix2cols){
+                  let value = determinant(table2, matrix2rows);
+                  setAns(null);
+                  setVal(value);
+                }
+                else{
+                  setError('Matrix should a square matrix')
+                }
+              }}>
+              <Text className="text-lg font-medium text-gray-200">
+              Determinant(B)
               </Text>
             </TouchableOpacity>
           </View>
@@ -299,7 +386,11 @@ const Body = ({navigation}) => {
                 {error}
               </Text>
             )}
-            {ans &&
+            {val != null ?
+            <Text className="text-lg font-medium text-black">Determinant : {val}</Text>
+            : null
+            }
+            {ans ?
               ans.map((row, i) => {
                 return (
                   <View key={i}>
@@ -317,9 +408,9 @@ const Body = ({navigation}) => {
                     </View>
                   </View>
                 );
-              })}
+              }): null}
           </View>
-          <View className="flex flex-row items-center justify-center">
+          {/* <View className="flex flex-row items-center justify-center">
             <View>
               <Icon
                 name="information-circle-outline"
@@ -335,14 +426,15 @@ const Body = ({navigation}) => {
                 documentation
               </Text>
             </Text>
-          </View>
-          <View className="bg-[#032e5c] flex items-center py-2 mt-10">
-            <Text className="text-sm font-medium text-gray-50">
+          </View> */}
+          <View className="bg-[#032e5c] flex items-center py-3 mt-10">
+            <Text className="text-base font-medium text-gray-50">
               Developed By
             </Text>
-            <Text className="text-xs font-normal text-gray-50">
-              Kalpajeet Dutta, Sharbanee Kalita & Prachurjya Goswami
+            <Text className="text-sm font-normal text-gray-50 mt-1">
+              Kalpajeet Dutta, Sharbanee Kalita
             </Text>
+            <Text className="text-sm font-normal text-gray-50 mt-1">& Prachurjya Goswami</Text>
           </View>
         </ScrollView>
       </SafeAreaView>

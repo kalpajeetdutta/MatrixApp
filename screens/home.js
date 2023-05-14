@@ -1,9 +1,14 @@
 import { View, Text, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import LinearGradient from 'react-native-linear-gradient';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import SplashScreen from 'react-native-splash-screen'
 
 const Home = ({navigation}) => {
+
+  useEffect(() => {
+    SplashScreen.hide();
+  },[])
+  
   return (
     <View>
       <View className="w-full h-screen bg-[#032e5c] flex justify-center items-center">
